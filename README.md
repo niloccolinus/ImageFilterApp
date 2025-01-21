@@ -25,12 +25,12 @@ python --version
 Installez les bibliothèques nécessaires en exécutant la commande suivante :
 
 ```
-pip install pillow pysimplegui
+pip install pillow pysimplegui opencv-python
 ```
 
 Note : PySimpleGUI
 
-PySimpleGUI nécessite une clé de licence gratuite pour son utilisation. Suivez les étapes fournies après l'installation pour obtenir votre clé.
+PySimpleGUI nécessite une clé de licence gratuite pour son utilisation. Vous pouvez vouz enregistrer au lancement de l'application (ou utiliser la version d'essai de 30 jours).
 
 ## Utilisation
 

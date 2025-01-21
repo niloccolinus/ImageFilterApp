@@ -128,7 +128,7 @@ if __name__ == "__main__":
                 tk_image = convert_to_tk_image(annotated_image_pillow)
                 window["-IMAGE-"].update(data=tk_image)
 
-                # Afficher les résultats en français
+                # Afficher les résultats
                 sg.popup(f"Triangles : {shapes_count['triangle']}, "
                         f"Rectangles : {shapes_count['rectangle']}, "
                         f"Carrés : {shapes_count['square']}, "

@@ -7,47 +7,47 @@ class ShapeDetector:
 
     # Fonction pour détecter et annoter des formes géométriques sur une image
     def detect_shapes(self, image_path):
-        # Charger l'image
+        # charger l'image
         image = cv2.imread(image_path)
         if image is None:
             raise FileNotFoundError(f"L'image '{image_path}' n'a pas été trouvée.")
 
-        # Convertir en niveaux de gris
+        # convertir en niveaux de gris
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-        # Appliquer un seuillage pour obtenir une image binaire inversée
+        # appliquer un seuil pour obtenir une image binaire inversée
         _, thresh_image = cv2.threshold(gray_image, 220, 255, cv2.THRESH_BINARY_INV)
 
-        # Trouver les contours dans l'image
+        # trouver les contours dans l'image
         contours, _ = cv2.findContours(thresh_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-        # Initialiser le compteur de formes
+        # compteur de formes
         shapes_count = {"triangle": 0, "rectangle": 0, "square": 0, "quadrilateral": 0, "circle": 0, "polygon": 0}
 
-        # Définir les couleurs et polices
-        contour_color = (0, 255, 0)  # Vert pour les contours
-        text_color = (0, 0, 0)  # Noir pour le texte
+        # couleurs et polices
+        contour_color = (0, 255, 0)
+        text_color = (0, 0, 0)
         font = cv2.FONT_HERSHEY_SIMPLEX
 
-        # Parcourir les contours
+        # parcourir les contours
         for contour in contours:
-            # Approximer le contour pour simplifier la forme
+            # approximation du contour pour simplifier la forme
             epsilon = 0.01 * cv2.arcLength(contour, True)
             approx = cv2.approxPolyDP(contour, epsilon, True)
 
-            # Calculer la boîte englobante
+            # calculer la boîte englobante (sert pour différencier rectangle et carré)
             x, y, w, h = cv2.boundingRect(approx)
             aspect_ratio = w / float(h)
 
-            # Calculer le cercle minimum englobant
+            # calculer le cercle minimum englobant
             area = cv2.contourArea(contour)
             perimeter = cv2.arcLength(contour, True)
             circularity = (4 * math.pi * area) / (perimeter ** 2) if perimeter > 0 else 0
 
-            # Position pour annoter le texte
+            # position pour annoter le texte
             coords = (x + w // 4, y + h // 2)
 
-            # Identifier la forme
+            # identifier la forme en comptant les aretes
             if len(approx) == 3:  # Triangle
                 cv2.putText(image, "Triangle", coords, font, 0.6, text_color, 2)
                 shapes_count["triangle"] += 1
@@ -76,7 +76,7 @@ class ShapeDetector:
     # Fonction pour vérifier si un quadrilatère est un rectangle
     def is_rectangle(self, approx):
         if len(approx) == 4:
-            # Vérifier les angles entre les sommets
+            # vérifier les anlges entre les sommets
             angles = []
             for i in range(4):
                 pt1 = approx[i][0]
@@ -94,6 +94,6 @@ class ShapeDetector:
                     angle = math.degrees(math.acos(dot_product / (norm1 * norm2)))
                     angles.append(angle)
 
-            # Vérifier si tous les angles sont proches de 90 degrés
+            # vérifier si tous les angles sont proches de 90 degrés
             return all(80 <= angle <= 100 for angle in angles)
         return False
