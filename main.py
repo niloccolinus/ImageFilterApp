@@ -69,29 +69,29 @@ if __name__ == "__main__":
             except FileNotFoundError:
                 sg.popup("Fichier introuvable", "L'image sélectionnée n'a pas été trouvée.")
 
-        # Appliquer uniquement le filtre correspondant au slider déplacé
+        # Variable pour stocker l'image modifiée
+        modified_image = None
+
+        # Si un slider est déplacé
         if event in ("-BLUR-", "-CONTRAST-", "-BRIGHTNESS-"):
             if original_image:
-                # Réinitialiser l'image avec l'image originale
-                image_manager.image = original_image.copy()
+                # Appliquer les modifications à l'image actuellement modifiée
+                intensity_blur = values["-BLUR-"]
+                intensity_contrast = values["-CONTRAST-"]
+                intensity_brightness = values["-BRIGHTNESS-"]
 
-                # Identifier le filtre à appliquer
-                if event == "-BLUR-":
-                    filter_to_apply = BlurFilter()
-                    intensity = values["-BLUR-"]
-                elif event == "-CONTRAST-":
-                    filter_to_apply = ContrastFilter()
-                    intensity = values["-CONTRAST-"]
-                elif event == "-BRIGHTNESS-":
-                    filter_to_apply = BrightnessFilter()
-                    intensity = values["-BRIGHTNESS-"]
+                # Réinitialiser l'image modifiée avec une copie de l'image originale
+                modified_image = original_image.copy()
 
-                # Appliquer le filtre correspondant
-                image_manager.image = filter_manager.apply_filter(filter_to_apply, image_manager.image, intensity)
+                # Appliquer les filtres de manière cumulative
+                modified_image = filter_manager.apply_filter(BlurFilter(), modified_image, intensity_blur)
+                modified_image = filter_manager.apply_filter(ContrastFilter(), modified_image, intensity_contrast)
+                modified_image = filter_manager.apply_filter(BrightnessFilter(), modified_image, intensity_brightness)
 
-                # Mettre à jour l'affichage de l'image en miniature
-                tk_image = convert_to_tk_image(image_manager.image)
+                # Mettre à jour l'affichage de l'image
+                tk_image = convert_to_tk_image(modified_image)
                 window["-IMAGE-"].update(data=tk_image)
+
 
         # Si clic sur Sauvegarder
         if event == "Sauvegarder":
